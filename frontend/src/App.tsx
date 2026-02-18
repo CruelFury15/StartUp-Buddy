@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
+import { StartupProvider } from './contexts/StartupContext';
 import { Sidebar } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
 import { Chatbot } from './components/Chatbot';
@@ -19,9 +21,8 @@ const pageTitles: Record<string, string> = {
   dashboard: 'Dashboard',
   explorer: 'Startup Explorer',
   mentor: 'AI Mentor',
-  risk: 'Risk Assessment',
+  financial: 'Financial Assessment',
   runway: 'Runway Calculator',
-  financial: 'Financial Advisor',
   cofounder: 'Co-Founder Report',
   settings: 'Settings',
 };
@@ -43,12 +44,10 @@ function ProtectedLayout() {
         return <Explorer />;
       case 'mentor':
         return <Mentor />;
-      case 'risk':
-        return <RiskAssessment />;
-      case 'runway':
-        return <RunwayPage />;
       case 'financial':
         return <FinancialRunway />;
+      case 'runway':
+        return <RunwayPage />;
       case 'cofounder':
         return <CoFounderPage />;
       case 'settings':
@@ -66,7 +65,10 @@ function ProtectedLayout() {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
       {/* Navbar */}
-      <Navbar pageTitle={pageTitles[activePage] || 'Dashboard'} />
+      <Navbar 
+        pageTitle={pageTitles[activePage] || 'Dashboard'} 
+        onNavigateToSettings={() => setActivePage('settings')}
+      />
 
       {/* Main Content */}
       <main className="lg:ml-64 pt-20 p-4 lg:p-6 min-h-screen">
@@ -75,8 +77,8 @@ function ProtectedLayout() {
         </div>
       </main>
 
-      {/* Floating Chatbot */}
-      <Chatbot />
+      {/* Floating Chatbot - Hidden on Mentor page */}
+      {activePage !== 'mentor' && <Chatbot />}
     </div>
   );
 }
@@ -86,11 +88,15 @@ export function App() {
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<ProtectedLayout />} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
-          </Routes>
+          <StartupProvider>
+            <ChatProvider>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<ProtectedLayout />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
+              </Routes>
+            </ChatProvider>
+          </StartupProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

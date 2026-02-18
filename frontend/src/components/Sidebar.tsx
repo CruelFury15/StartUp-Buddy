@@ -24,9 +24,8 @@ const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'explorer', label: 'Startup Explorer', icon: Compass },
   { id: 'mentor', label: 'AI Mentor', icon: Bot },
-  { id: 'risk', label: 'Risk Assessment', icon: ShieldAlert },
+  { id: 'financial', label: 'Financial Assessment', icon: LineChart },
   { id: 'runway', label: 'Runway Calculator', icon: Calculator },
-  { id: 'financial', label: 'Financial Advisor', icon: LineChart },
   { id: 'cofounder', label: 'Co-Founder Report', icon: Users },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
@@ -57,6 +56,7 @@ export function Sidebar({ activePage, setActivePage }: SidebarProps) {
           className={`lg:hidden p-2 rounded-xl ${
             theme === 'dark' ? 'hover:bg-[#1F2937] text-[#F9FAFB]' : 'hover:bg-[#F9FAFB] text-[#111827]'
           }`}
+          aria-label="Close menu"
         >
           <X className="w-5 h-5" />
         </button>
@@ -112,6 +112,7 @@ export function Sidebar({ activePage, setActivePage }: SidebarProps) {
             ? 'bg-[#111827] text-[#F9FAFB] border border-[#1F2937]' 
             : 'bg-white text-[#111827] border border-[#E5E7EB]'
         }`}
+        aria-label="Open menu"
       >
         <Menu className="w-5 h-5" />
       </button>

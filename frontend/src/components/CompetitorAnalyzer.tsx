@@ -5,12 +5,13 @@ import { useTheme } from '../context/ThemeContext';
 interface Competitor {
   name: string;
   level: 'High' | 'Medium' | 'Low';
+  description?: string;
 }
 
 interface CompetitorAnalyzerProps {
   startupIdea: string;
   competitors: Competitor[];
-  saturationPercentage: number;
+  saturationPercentage?: number;
 }
 
 const levelColors = {
@@ -19,7 +20,7 @@ const levelColors = {
   Low: '#16A34A',
 };
 
-export function CompetitorAnalyzer({ startupIdea, competitors, saturationPercentage }: CompetitorAnalyzerProps) {
+export function CompetitorAnalyzer({ startupIdea, competitors, saturationPercentage = 65 }: CompetitorAnalyzerProps) {
   const { theme } = useTheme();
 
   return (
@@ -50,7 +51,7 @@ export function CompetitorAnalyzer({ startupIdea, competitors, saturationPercent
         theme === 'dark' ? 'bg-[#0F172A]' : 'bg-[#F9FAFB]'
       }`}>
         <p className={`text-sm ${theme === 'dark' ? 'text-[#F9FAFB]/60' : 'text-[#111827]/60'}`}>
-          Startup Idea
+          Your Startup Idea
         </p>
         <p className={`font-semibold ${theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'}`}>
           {startupIdea}
@@ -69,22 +70,31 @@ export function CompetitorAnalyzer({ startupIdea, competitors, saturationPercent
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className={`flex items-center justify-between p-3 rounded-xl ${
+            className={`p-3 rounded-xl ${
               theme === 'dark' ? 'bg-[#0F172A]' : 'bg-[#F9FAFB]'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" style={{ color: levelColors[competitor.level] }} />
-              <span className={theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'}>
-                {competitor.name}
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" style={{ color: levelColors[competitor.level] }} />
+                <span className={`font-medium ${theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'}`}>
+                  {competitor.name}
+                </span>
+              </div>
+              <span 
+                className="text-sm font-medium"
+                style={{ color: levelColors[competitor.level] }}
+              >
+                {competitor.level} competition
               </span>
             </div>
-            <span 
-              className="text-sm font-medium"
-              style={{ color: levelColors[competitor.level] }}
-            >
-              {competitor.level} competition
-            </span>
+            {competitor.description && (
+              <p className={`text-xs mt-1 ${
+                theme === 'dark' ? 'text-[#F9FAFB]/60' : 'text-[#111827]/60'
+              }`}>
+                {competitor.description}
+              </p>
+            )}
           </motion.div>
         ))}
       </div>

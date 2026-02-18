@@ -6,16 +6,23 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface NavbarProps {
   pageTitle: string;
+  onNavigateToSettings?: () => void;
 }
 
-export function Navbar({ pageTitle }: NavbarProps) {
+export function Navbar({ pageTitle, onNavigateToSettings }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleProfileClick = () => {
+    if (onNavigateToSettings) {
+      onNavigateToSettings();
+    }
   };
 
   return (
@@ -26,10 +33,17 @@ export function Navbar({ pageTitle }: NavbarProps) {
           : 'bg-[#F9FAFB] border-b border-[#E5E7EB]'
       }`}
     >
-      {/* Page Title */}
-      <h1 className={`text-lg lg:text-xl font-semibold ml-12 lg:ml-0 ${theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'}`}>
-        {pageTitle}
-      </h1>
+      {/* Page Title with Username */}
+      <div className="ml-12 lg:ml-0">
+        <h1 className={`text-lg lg:text-xl font-semibold ${theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'}`}>
+          {pageTitle}
+        </h1>
+        {user && (
+          <p className={`text-xs lg:text-sm ${theme === 'dark' ? 'text-[#F9FAFB]/60' : 'text-[#111827]/60'}`}>
+            Welcome, {user.name}
+          </p>
+        )}
+      </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-3 lg:gap-4">
@@ -64,14 +78,18 @@ export function Navbar({ pageTitle }: NavbarProps) {
         </motion.button>
 
         {/* Profile Avatar */}
-        <motion.div
+        <motion.button
+          type="button"
           whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleProfileClick}
           className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center cursor-pointer ${
             theme === 'dark' ? 'bg-[#22C55E]' : 'bg-[#16A34A]'
           }`}
+          aria-label="Open profile settings"
         >
           <User className="w-5 h-5 text-white" />
-        </motion.div>
+        </motion.button>
       </div>
     </header>
   );

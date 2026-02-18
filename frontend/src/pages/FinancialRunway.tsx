@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, DollarSign, TrendingDown, TrendingUp, Clock, Target } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useTheme } from "../context/ThemeContext";
+import { useStartup } from "../contexts/StartupContext";
 
 const generateRunwayData = (
   initialCapital: number,
@@ -27,9 +28,24 @@ const generateRunwayData = (
 
 export function FinancialRunway() {
   const { theme } = useTheme();
-  const [initialCapital, setInitialCapital] = useState(2500000);
-  const [monthlyBurn, setMonthlyBurn] = useState(200000);
+  const { startupData } = useStartup();
+  
+  // Initialize with user's budget if available
+  const userBudget = startupData?.budget ? parseInt(startupData.budget) : 2500000;
+  const defaultBurn = Math.round(userBudget * 0.15); // 15% of budget as default burn
+  
+  const [initialCapital, setInitialCapital] = useState(userBudget);
+  const [monthlyBurn, setMonthlyBurn] = useState(defaultBurn);
   const [teamSize, setTeamSize] = useState(5);
+
+  // Update when startup data changes
+  useEffect(() => {
+    if (startupData?.budget) {
+      const budget = parseInt(startupData.budget);
+      setInitialCapital(budget);
+      setMonthlyBurn(Math.round(budget * 0.15));
+    }
+  }, [startupData]);
 
   const runwayData = generateRunwayData(initialCapital, monthlyBurn, teamSize);
   const runwayMonths = runwayData.findIndex((d) => d.cash === 0);
@@ -45,6 +61,24 @@ export function FinancialRunway() {
 
   return (
     <div className="space-y-6">
+      {/* Info Banner if no startup data */}
+      {!startupData && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`p-4 rounded-xl ${
+            theme === 'dark'
+              ? 'bg-[#22C55E]/10 border border-[#22C55E]/20'
+              : 'bg-[#DCFCE7] border border-[#16A34A]/20'
+          }`}
+        >
+          <p className={`text-sm ${
+            theme === 'dark' ? 'text-[#22C55E]' : 'text-[#16A34A]'
+          }`}>
+            💡 <strong>Tip:</strong> Analyze your startup idea on the Dashboard first to get personalized financial projections based on your actual budget!
+          </p>
+        </motion.div>
+      )}
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

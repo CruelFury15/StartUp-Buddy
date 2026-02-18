@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Cpu, 
@@ -8,6 +9,7 @@ import {
   Store 
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { CategoryIdeas } from './CategoryIdeas';
 
 const categories = [
   { 
@@ -56,6 +58,17 @@ const categories = [
 
 export function Explorer() {
   const { theme } = useTheme();
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(null);
+
+  if (selectedCategory) {
+    return (
+      <CategoryIdeas
+        categoryId={selectedCategory.id}
+        categoryName={selectedCategory.name}
+        onBack={() => setSelectedCategory(null)}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -93,6 +106,7 @@ export function Explorer() {
                   ? '0 20px 40px rgba(0,0,0,0.4)' 
                   : '0 20px 40px rgba(0,0,0,0.15)' 
               }}
+              onClick={() => setSelectedCategory({ id: category.id, name: category.name })}
               className={`p-6 rounded-xl cursor-pointer transition-all duration-300 ${
                 theme === 'dark'
                   ? 'bg-[#111827] border border-[#1F2937]'
@@ -101,9 +115,9 @@ export function Explorer() {
             >
               <div 
                 className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                style={{ backgroundColor: `${category.color}20` }}
+                style={{ backgroundColor: `${category.color}20` } as React.CSSProperties}
               >
-                <Icon className="w-7 h-7" style={{ color: category.color }} />
+                <Icon className="w-7 h-7" style={{ color: category.color } as React.CSSProperties} />
               </div>
               
               <h3 className={`text-xl font-bold mb-2 ${
@@ -124,11 +138,11 @@ export function Explorer() {
               >
                 <span 
                   className="text-sm font-medium"
-                  style={{ color: category.color }}
+                  style={{ color: category.color } as React.CSSProperties}
                 >
                   Explore ideas
                 </span>
-                <span style={{ color: category.color }}>→</span>
+                <span style={{ color: category.color } as React.CSSProperties}>→</span>
               </motion.div>
             </motion.div>
           );

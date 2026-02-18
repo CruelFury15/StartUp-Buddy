@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 
 interface StartupCardProps {
   title: string;
-  category: string;
+  description?: string;
   confidenceScore: number;
   riskLevel: 'Low' | 'Medium' | 'High';
   delay?: number;
@@ -16,7 +16,7 @@ const riskColors = {
   High: { bg: '#EF4444', text: 'white' },
 };
 
-export function StartupCard({ title, category, confidenceScore, riskLevel, delay = 0 }: StartupCardProps) {
+export function StartupCard({ title, description, confidenceScore, riskLevel, delay = 0 }: StartupCardProps) {
   const { theme } = useTheme();
   const risk = riskColors[riskLevel];
 
@@ -49,17 +49,19 @@ export function StartupCard({ title, category, confidenceScore, riskLevel, delay
         </span>
       </div>
 
-      <h3 className={`text-lg font-bold mb-1 ${
+      <h3 className={`text-lg font-bold mb-2 ${
         theme === 'dark' ? 'text-[#F9FAFB]' : 'text-[#111827]'
       }`}>
         {title}
       </h3>
 
-      <p className={`text-sm mb-4 ${
-        theme === 'dark' ? 'text-[#F9FAFB]/60' : 'text-[#111827]/60'
-      }`}>
-        Category: {category}
-      </p>
+      {description && (
+        <p className={`text-sm mb-4 ${
+          theme === 'dark' ? 'text-[#F9FAFB]/60' : 'text-[#111827]/60'
+        }`}>
+          {description}
+        </p>
+      )}
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">

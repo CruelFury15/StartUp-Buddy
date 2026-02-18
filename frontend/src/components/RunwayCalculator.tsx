@@ -1,12 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calculator, TrendingUp } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useStartup } from '../contexts/StartupContext';
 
 export function RunwayCalculator() {
   const { theme } = useTheme();
-  const [budget, setBudget] = useState<number>(50000);
-  const [monthlyExpense, setMonthlyExpense] = useState<number>(10000);
+  const { startupData } = useStartup();
+  
+  // Initialize with user's budget if available
+  const userBudget = startupData?.budget ? parseInt(startupData.budget) : 50000;
+  const defaultExpense = Math.round(userBudget * 0.15); // 15% of budget
+  
+  const [budget, setBudget] = useState<number>(userBudget);
+  const [monthlyExpense, setMonthlyExpense] = useState<number>(defaultExpense);
+
+  // Update when startup data changes
+  useEffect(() => {
+    if (startupData?.budget) {
+      const newBudget = parseInt(startupData.budget);
+      setBudget(newBudget);
+      setMonthlyExpense(Math.round(newBudget * 0.15));
+    }
+  }, [startupData]);
 
   const runwayMonths = monthlyExpense > 0 ? Math.floor(budget / monthlyExpense) : 0;
 
